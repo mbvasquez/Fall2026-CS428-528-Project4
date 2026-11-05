@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <title>Random Password Generator | Create Random Passwords</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Avast CSS-->
+    <link rel="stylesheet" href="https://www.avast.com/etc.clientlibs/avast/clientlibs/generated/components/randompasswordgenerator.lc-4112767010f2ccdaf5af0faceafc009d-lc.min.css" type="text/css">
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -21,11 +23,85 @@
     <div>
         <p>Need a secure password ideas? Generate a unique, multi-character, strong password for free.  This type of password will help protect your online accounts and stay safe.</p>
     </div>
-    <div id="wrapper">
-        <div>
-            <input type="text" readonly placeholder="mqa7THqCFCxxWhJx">
-            <button id="copy">Copy</button>
-            <button id="save">Save</button>
+    <div class="c-pwd-gen" id="randompasswordgenerator-ec93b6dceb" data-score="very-strong">
+        <div class="c-pwd-gen__container">
+            <div class="c-pwd-gen__illustrations">
+                <img class="c-pwd-gen__illustrations-image c-pwd-gen--very-weak" loading="eager" src="https://www.avast.com/content/dam/avast/illustrations/bait/Password-Generator-1.svg" alt="">
+                <img class="c-pwd-gen__illustrations-image c-pwd-gen--weak" loading="eager" src="https://www.avast.com/content/dam/avast/illustrations/bait/Password-Generator-2.svg" alt="">
+                <img class="c-pwd-gen__illustrations-image c-pwd-gen--good" loading="eager" src="https://www.avast.com/content/dam/avast/illustrations/bait/Password-Generator-3.svg" alt="">
+                <img class="c-pwd-gen__illustrations-image c-pwd-gen--strong" loading="eager" src="https://www.avast.com/content/dam/avast/illustrations/bait/Password-Generator-4.svg" alt="">
+                <img class="c-pwd-gen__illustrations-image c-pwd-gen--very-strong" loading="eager" src="https://www.avast.com/content/dam/avast/illustrations/bait/Password-Generator-5.svg" alt="">
+            </div>
+            <div class="c-pwd-gen__main-fields">
+                <div class="c-pwd-gen__pass-generator">
+                    <div class="c-pwd-gen__input-container">
+                        <div class="c-pwd-gen__input-wrapper">
+                            <div class="c-pwd-gen__form-control-wrapper">
+                                <input type="text" class="c-pwd-gen__password-generated" placeholder="Generated password goes here!">
+                                <div class="c-pwd-gen__label-refresh">
+                                    <label class="c-pwd-gen__label c-pwd-gen--very-weak t-bg--red">Very weak</label>
+                                    <label class="c-pwd-gen__label c-pwd-gen--weak t-bg--light-orange">Weak</label>
+                                    <label class="c-pwd-gen__label c-pwd-gen--good t-bg--pale-orange">Good</label>
+                                    <label class="c-pwd-gen__label c-pwd-gen--strong t-bg--pale-green">Strong</label>
+                                    <label class="c-pwd-gen__label c-pwd-gen--very-strong t-bg--bright-green">Very strong</label>
+                                </div>
+                                <button class="c-pwd-gen__icon-refresh"></button>
+                            </div>
+                        </div>
+                        <div class="c-pwd-gen__copy-btn">
+                            <div class="c-button c-btn--medium c-btn--blue">
+                                <a data-popup-open="c-modal-copy" class="c-btn   " href="#" data-click-to-open-init="1">
+                                    <span>Copy</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-pwd-gen__settings">
+                    <div class="c-pwd-gen__length-settings">
+                        <div class="c-pwd-gen__length-count">
+                            <label class="c-pwd-gen__length-label body2">
+                                <span>Password length</span>:
+                                <span class="c-pwd-gen__length-value">39</span>
+                            </label>
+                        </div>
+                        <div class="c-pwd-gen__slider-settings">
+                            <button class="c-pwd-gen__slider-settings-btn c-pwd-gen--decrement" data-value-change="-1">
+                                <span class="c-pwd-gen__minus"></span>
+                            </button>
+                            <div class="c-pwd-gen__slider-container">
+                                <input type="range" min="1" max="50" value="16" class="c-pwd-gen__slider" style="background: linear-gradient(to right, rgb(0, 112, 246) 0%, rgb(0, 112, 246) 78%, rgb(255, 255, 255) 78%, white 100%);">
+                            </div>
+                            <button class="c-pwd-gen__slider-settings-btn c-pwd-gen--increment" data-value-change="1">
+                                <span class="c-pwd-gen__plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="c-pwd-gen__complexity-settings">
+                        <label class="body2 c-pwd-gen__complexity-label">
+                            <span>Characters used</span>:
+                        </label>
+                        <div class="c-pwd-gen__complexity-checkbox">
+                            <div class="c-pwd-gen__checkbox-wrapper">
+                                <input type="checkbox" id="randompasswordgenerator-ec93b6dceb-uppercase" class="c-pwd-gen__custom-control-input c-pwd-gen__uppercase" value="A" checked="">
+                                <label for="randompasswordgenerator-ec93b6dceb-uppercase" class="c-pwd-gen__custom-control-label body2">ABC</label>
+                            </div>
+                            <div class="c-pwd-gen__checkbox-wrapper">
+                                <input id="randompasswordgenerator-ec93b6dceb-lowercase" type="checkbox" class="c-pwd-gen__custom-control-input c-pwd-gen__lowercase" value="a" checked="">
+                                <label for="randompasswordgenerator-ec93b6dceb-lowercase" class="c-pwd-gen__custom-control-label body2">abc</label>
+                            </div>
+                            <div class="c-pwd-gen__checkbox-wrapper">
+                                <input id="randompasswordgenerator-ec93b6dceb-numbers" type="checkbox" class="c-pwd-gen__custom-control-input c-pwd-gen__numbers" value="0" checked="">
+                                <label for="randompasswordgenerator-ec93b6dceb-numbers" class="c-pwd-gen__custom-control-label body2">123</label>
+                            </div>
+                            <div class="c-pwd-gen__checkbox-wrapper">
+                                <input id="randompasswordgenerator-ec93b6dceb-specials" type="checkbox" class="c-pwd-gen__custom-control-input c-pwd-gen__specials" value="!">
+                                <label for="randompasswordgenerator-ec93b6dceb-specials" class="c-pwd-gen__custom-control-label body2">#$&amp;</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="logic.js"></script>
