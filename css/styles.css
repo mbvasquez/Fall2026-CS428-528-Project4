@@ -129,6 +129,10 @@ h1, div {
 }
 
 .vault-entry__password {
+    user-select: none;
+}
+
+.vault-entry__text {
     font-family: monospace;
     user-select: all;
 }

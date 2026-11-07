@@ -331,12 +331,21 @@ function renderVaultEntries(entries) {
         const details = document.createElement('div');
         details.className = "vault-entry__details";
         const website = document.createElement('p');
-        website.textContent = `Website: ${entry.website}`;
+        website.textContent = "Website: ";
+        const websiteText = document.createElement('span');
+        websiteText.className = "vault-entry__text";
+        websiteText.textContent = `${entry.website}`;
         const username = document.createElement('p');
-        username.textContent = `Username: ${entry.username}`;
+        username.textContent = "Username: ";
+        const usernameText = document.createElement('span');
+        usernameText.className = "vault-entry__text";
+        usernameText.textContent = `${entry.username}`;
         const password = document.createElement('p');
         password.className = "vault-entry__password";
-        password.textContent = `Password: ${entry.password}`;
+        password.textContent = `Password: `;
+        const passwordText = document.createElement('span');
+        passwordText.className = "vault-entry__text";
+        passwordText.textContent = `${entry.password}`;
         const actions = document.createElement('div');
         actions.className = "vault-entry__actions";
         const editButton = document.createElement('button');
@@ -349,6 +358,9 @@ function renderVaultEntries(entries) {
         deleteButton.type = "button";
         deleteButton.dataset.vaultAction = "delete";
         deleteButton.textContent = "Delete";
+        website.append(websiteText);
+        username.append(usernameText);
+        password.append(passwordText);
         actions.append(editButton, deleteButton);
         details.append(website, username, password, actions);
 
