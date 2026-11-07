@@ -1,8 +1,10 @@
-// Initialize variables and character sets
+// Character sets
 const lowerAlphabet = "abcdefghijklmnopqrstuvwxyz";
 const upperAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const numbers = "0123456789";
 const symbols = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+// Configurable options
 const useLowercase = document.getElementById("lowercase");
 const useUppercase = document.getElementById("uppercase");
 const useNumbers = document.getElementById("numbers");
@@ -14,8 +16,34 @@ const lengthInput = document.getElementById("length");
 const slider = document.querySelector(".c-pwd-gen__slider");
 const sliderDecrementBtn = document.querySelector(".c-pwd-gen--decrement");
 const sliderIncrementBtn = document.querySelector(".c-pwd-gen--increment");
+
+// Refresh and copy buttons
 const refreshBtn = document.getElementById("refreshBtn");
 const copyBtn = document.getElementById("copyBtn");
+
+// Secure storage variables
+const saveBtn = document.getElementById("saveBtn");
+const saveDialog = document.getElementById("saveDialog");
+const saveForm = document.getElementById("saveForm");
+const websiteInput = document.getElementById("websiteInput");
+const usernameInput = document.getElementById("usernameInput");
+const savedPasswordInput = document.getElementById("savedPasswordInput");
+const masterPasswordInput = document.getElementById("masterPasswordInput");
+const confirmMasterPasswordInput = document.getElementById("confirmMasterPasswordInput");
+const confirmMasterPasswordField = document.getElementById("confirmMasterPasswordField");
+const vaultInstructions = document.getElementById("vaultInstructions");
+const saveError = document.getElementById("saveError");
+const saveStatus = document.getElementById("saveStatus");
+const cancelSaveBtn = document.getElementById("cancelSaveBtn");
+const viewVaultBtn = document.getElementById("viewVaultBtn");
+const vaultDialog = document.getElementById("vaultDialog");
+const vaultUnlockForm = document.getElementById("vaultUnlockForm");
+const vaultMasterPasswordInput = document.getElementById("vaultMasterPasswordInput");
+const vaultUnlockInstructions = document.getElementById("vaultUnlockInstructions");
+const vaultError = document.getElementById("vaultError");
+const vaultEntries = document.getElementById("vaultEntries");
+const closeVaultBtn = document.getElementById("closeVaultBtn");
+let unlockedVault = null;
 
 // Random password generator function
 function generatePassword(length, useLowercase, useUppercase, useNumbers, useSymbols, avoidAmbiguous) {
@@ -30,8 +58,13 @@ function generatePassword(length, useLowercase, useUppercase, useNumbers, useSym
 
     let password = "";
     for (let i = 0; i < length; i++) {
-        // Replace Math.random() with a more secure random number generator
-        const randomIndex = Math.floor(Math.random() * characters.length);
+        // Cryptographically secure random number generator
+        const range = Math.floor(0x100000000 / characters.length) * characters.length;
+        const randomValue = new Uint32Array(1);
+        do {
+            crypto.getRandomValues(randomValue);
+        } while (randomValue[0] >= range);
+        const randomIndex = randomValue[0] % characters.length;
         password += characters[randomIndex];
     }
     return password;
@@ -140,6 +173,311 @@ avoidAmbiguous.addEventListener('change', () => {
 // Event listener for the copy button 
 copyBtn.addEventListener('click', function () {
     copyText();
+});
+
+// Event lister for the save button
+saveBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    let isNewVault;
+    try {
+        isNewVault = !PasswordVaultStorage.hasVault();
+    } catch (error) {
+        saveStatus.textContent = error.message || "Encrypted vault storage is not available.";
+        return;
+    }
+
+    saveForm.reset();
+    saveError.hidden = true;
+    saveError.textContent = "";
+    saveStatus.textContent = "";
+    savedPasswordInput.value = passwordText.value;
+    confirmMasterPasswordField.hidden = !isNewVault;
+    confirmMasterPasswordInput.required = isNewVault;
+    masterPasswordInput.autocomplete = isNewVault ? "new-password" : "current-password";
+    vaultInstructions.textContent = isNewVault
+        ? "Create a master password to protect your password entries (at least 12 characters)."
+        : "Enter your master password to unlock your encrypted vault.";
+    masterPasswordInput.minLength = isNewVault ? 12 : 1;
+    saveDialog.showModal();
+    websiteInput.focus();
+});
+
+cancelSaveBtn.addEventListener('click', () => {
+    saveDialog.close();
+});
+
+saveDialog.addEventListener('close', () => {
+    masterPasswordInput.value = "";
+    confirmMasterPasswordInput.value = "";
+});
+
+saveForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    saveError.hidden = true;
+    saveError.textContent = "";
+
+    let isNewVault;
+    try {
+        isNewVault = !PasswordVaultStorage.hasVault();
+    } catch (error) {
+        saveError.textContent = error.message || "Encrypted vault storage is not available.";
+        saveError.hidden = false;
+        return;
+    }
+
+    if (isNewVault && masterPasswordInput.value !== confirmMasterPasswordInput.value) {
+        saveError.textContent = "The master passwords do not match.";
+        saveError.hidden = false;
+        confirmMasterPasswordInput.focus();
+        return;
+    }
+
+    if (!websiteInput.value.trim() || !usernameInput.value.trim()) {
+        saveError.textContent = "Enter both a website and a username.";
+        saveError.hidden = false;
+        (websiteInput.value.trim() ? usernameInput : websiteInput).focus();
+        return;
+    }
+
+    const submitButton = saveForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    try {
+        await PasswordVaultStorage.saveEntry(masterPasswordInput.value, {
+            website: websiteInput.value.trim(),
+            username: usernameInput.value.trim(),
+            password: savedPasswordInput.value
+        });
+        saveDialog.close();
+        saveBtn.textContent = "Saved!"
+        
+        setTimeout(() => {
+            saveBtn.textContent = "Save";
+        }, 2000);
+        
+    } catch (error) {
+        saveError.textContent = error.message || "Unable to save the password.";
+        saveError.hidden = false;
+    } finally {
+        submitButton.disabled = false;
+        masterPasswordInput.value = "";
+        confirmMasterPasswordInput.value = "";
+    }
+});
+
+viewVaultBtn.addEventListener('click', () => {
+    try {
+        if (!PasswordVaultStorage.hasVault()) {
+            alert("There are no saved passwords in this browser yet.");
+            return;
+        }
+    } catch (error) {
+        saveStatus.textContent = error.message || "Encrypted vault storage is not available.";
+        return;
+    }
+
+    vaultUnlockForm.reset();
+    unlockedVault = null;
+    vaultUnlockForm.hidden = false;
+    vaultUnlockInstructions.hidden = false;
+    vaultEntries.hidden = true;
+    vaultEntries.replaceChildren();
+    vaultError.hidden = true;
+    vaultError.textContent = "";
+    vaultDialog.showModal();
+    vaultMasterPasswordInput.focus();
+});
+
+vaultUnlockForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    vaultError.hidden = true;
+    vaultError.textContent = "";
+
+    const submitButton = vaultUnlockForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    try {
+        unlockedVault = await PasswordVaultStorage.unlock(vaultMasterPasswordInput.value);
+        const entries = await unlockedVault.getEntries();
+        renderVaultEntries(entries);
+        vaultUnlockForm.hidden = true;
+        vaultUnlockInstructions.hidden = true;
+        vaultEntries.hidden = false;
+    } catch (error) {
+        unlockedVault = null;
+        vaultError.textContent = error.message || "Unable to unlock the vault.";
+        vaultError.hidden = false;
+    } finally {
+        submitButton.disabled = false;
+        vaultMasterPasswordInput.value = "";
+    }
+});
+
+function renderVaultEntries(entries) {
+    vaultEntries.replaceChildren();
+    if (entries.length === 0) {
+        const emptyMessage = document.createElement('p');
+        emptyMessage.textContent = "There are no saved passwords in this vault.";
+        vaultEntries.append(emptyMessage);
+        return;
+    }
+
+    entries.forEach((entry, index) => {
+        const card = document.createElement('article');
+        card.className = "vault-entry";
+        card.dataset.index = String(index);
+
+        const details = document.createElement('div');
+        details.className = "vault-entry__details";
+        const website = document.createElement('p');
+        website.textContent = `Website: ${entry.website}`;
+        const username = document.createElement('p');
+        username.textContent = `Username: ${entry.username}`;
+        const password = document.createElement('p');
+        password.className = "vault-entry__password";
+        password.textContent = `Password: ${entry.password}`;
+        const actions = document.createElement('div');
+        actions.className = "vault-entry__actions";
+        const editButton = document.createElement('button');
+        editButton.className = "vault-dialog__button";
+        editButton.type = "button";
+        editButton.dataset.vaultAction = "edit";
+        editButton.textContent = "Edit";
+        const deleteButton = document.createElement('button');
+        deleteButton.className = "vault-dialog__button";
+        deleteButton.type = "button";
+        deleteButton.dataset.vaultAction = "delete";
+        deleteButton.textContent = "Delete";
+        actions.append(editButton, deleteButton);
+        details.append(website, username, password, actions);
+
+        const editForm = document.createElement('form');
+        editForm.className = "vault-entry__edit-form vault-dialog__form";
+        editForm.hidden = true;
+        editForm.innerHTML = `
+            <label class="vault-dialog__field">
+                Website
+                <input name="website" type="text" autocomplete="url" required>
+            </label>
+            <label class="vault-dialog__field">
+                Username
+                <input name="username" type="text" autocomplete="username" required>
+            </label>
+            <label class="vault-dialog__field">
+                Password
+                <input name="password" type="text" autocomplete="off" required>
+            </label>
+            <div class="vault-entry__actions">
+                <button class="vault-dialog__button vault-dialog__button--primary" type="submit">Save changes</button>
+                <button class="vault-dialog__button" type="button" data-vault-action="cancel-edit">Cancel</button>
+            </div>
+        `;
+        editForm.elements.website.value = entry.website;
+        editForm.elements.username.value = entry.username;
+        editForm.elements.password.value = entry.password;
+
+        const deleteConfirmation = document.createElement('div');
+        deleteConfirmation.className = "vault-entry__delete-confirmation";
+        deleteConfirmation.hidden = true;
+        const confirmationText = document.createElement('p');
+        confirmationText.textContent = "Delete this saved password? This cannot be undone.";
+        const confirmationActions = document.createElement('div');
+        confirmationActions.className = "vault-entry__actions";
+        const confirmDeleteButton = document.createElement('button');
+        confirmDeleteButton.className = "vault-dialog__button vault-dialog__button--primary";
+        confirmDeleteButton.type = "button";
+        confirmDeleteButton.dataset.vaultAction = "confirm-delete";
+        confirmDeleteButton.textContent = "Delete password";
+        const cancelDeleteButton = document.createElement('button');
+        cancelDeleteButton.className = "vault-dialog__button";
+        cancelDeleteButton.type = "button";
+        cancelDeleteButton.dataset.vaultAction = "cancel-delete";
+        cancelDeleteButton.textContent = "Keep password";
+        confirmationActions.append(confirmDeleteButton, cancelDeleteButton);
+        deleteConfirmation.append(confirmationText, confirmationActions);
+
+        card.append(details, editForm, deleteConfirmation);
+        vaultEntries.append(card);
+    });
+}
+
+vaultEntries.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-vault-action]');
+    if (!button) {
+        return;
+    }
+
+    const card = button.closest('.vault-entry');
+    const details = card.querySelector('.vault-entry__details');
+    const editForm = card.querySelector('.vault-entry__edit-form');
+    const deleteConfirmation = card.querySelector('.vault-entry__delete-confirmation');
+    const action = button.dataset.vaultAction;
+
+    if (action === "edit") {
+        details.hidden = true;
+        deleteConfirmation.hidden = true;
+        editForm.hidden = false;
+        editForm.elements.website.focus();
+    } else if (action === "cancel-edit") {
+        details.hidden = false;
+        editForm.hidden = true;
+    } else if (action === "delete") {
+        details.hidden = true;
+        editForm.hidden = true;
+        deleteConfirmation.hidden = false;
+    } else if (action === "cancel-delete") {
+        details.hidden = false;
+        deleteConfirmation.hidden = true;
+    } else if (action === "confirm-delete") {
+        button.disabled = true;
+        vaultError.hidden = true;
+        try {
+            await unlockedVault.deleteEntry(Number(card.dataset.index));
+            renderVaultEntries(await unlockedVault.getEntries());
+        } catch (error) {
+            vaultError.textContent = error.message || "Unable to delete the password.";
+            vaultError.hidden = false;
+            button.disabled = false;
+        }
+    }
+});
+
+vaultEntries.addEventListener('submit', async (event) => {
+    const form = event.target.closest('.vault-entry__edit-form');
+    if (!form) {
+        return;
+    }
+    event.preventDefault();
+
+    const card = form.closest('.vault-entry');
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    vaultError.hidden = true;
+    try {
+        await unlockedVault.updateEntry(Number(card.dataset.index), {
+            website: form.elements.website.value.trim(),
+            username: form.elements.username.value.trim(),
+            password: form.elements.password.value
+        });
+        renderVaultEntries(await unlockedVault.getEntries());
+    } catch (error) {
+        vaultError.textContent = error.message || "Unable to update the password.";
+        vaultError.hidden = false;
+        submitButton.disabled = false;
+    }
+});
+
+closeVaultBtn.addEventListener('click', () => {
+    vaultDialog.close();
+});
+
+vaultDialog.addEventListener('close', () => {
+    unlockedVault = null;
+    vaultMasterPasswordInput.value = "";
+    vaultEntries.replaceChildren();
+    vaultEntries.hidden = true;
+    vaultUnlockForm.hidden = false;
+    vaultUnlockInstructions.hidden = false;
+    vaultError.hidden = true;
+    vaultError.textContent = "";
 });
 
 // Generate a new password when the page loads

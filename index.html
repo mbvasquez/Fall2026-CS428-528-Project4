@@ -29,7 +29,7 @@
                 <img class="c-pwd-gen__illustrations-image c-pwd-gen--very-strong" loading="eager" src="https://www.avast.com/content/dam/avast/illustrations/bait/Password-Generator-5.svg" alt="">
             </div>
             <div class="c-pwd-gen__main-fields">
-                <div class="c-pwd-gen__pass-generator">
+                <div class="c-pwd-gen__pass-generator" style="margin-bottom: 1rem;">
                     <div class="c-pwd-gen__input-container">
                         <div class="c-pwd-gen__input-wrapper">
                             <div class="c-pwd-gen__form-control-wrapper">
@@ -44,12 +44,28 @@
                                 <button class="c-pwd-gen__icon-refresh" id="refreshBtn"></button>
                             </div>
                         </div>
-                        <div class="c-pwd-gen__copy-btn">
-                            <div class="c-button c-btn--medium c-btn--blue">
-                                <a class="c-btn" id="copyBtn" href="#">
-                                    <span id="copy">Copy</span>
-                                </a>
-                            </div>
+                    </div>
+                </div>
+                <div class="c-pwd-gen__pass-buttons">
+                    <div class="c-pwd-gen__copy-btn">
+                        <div class="c-button c-btn--medium c-btn--blue">
+                            <a class="c-btn" id="copyBtn">
+                                <span id="copy">Copy</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="c-pwd-gen__save-btn">
+                        <div class="c-button c-btn--medium c-btn--gold">
+                            <button class="c-btn" id="saveBtn" type="button" aria-haspopup="dialog">
+                                <span id="save">Save</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="c-pwd-gen__save-btn">
+                        <div class="c-button c-btn--medium c-btn--blue">
+                            <button class="c-btn" id="viewVaultBtn" type="button" aria-haspopup="dialog" style="text-align: center;">
+                                View saved passwords
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -96,7 +112,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="c-pwd-gen__complexity-settings">
+                    <div class="c-pwd-gen__complexity-settings" style="margin-top: 1rem;">
                         <label class="body2 c-pwd-gen__complexity-label">
                             <span>Extra settings</span>:
                         </label>
@@ -106,11 +122,68 @@
                                 <label for="ambiguous" class="c-pwd-gen__custom-control-label body2">Avoid ambiguous (l, I, 1, 0, O, |)</label>
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <p id="saveStatus" class="vault-status" role="status" aria-live="polite"></p>
+    <dialog id="saveDialog" class="vault-dialog" aria-labelledby="saveDialogTitle">
+        <form id="saveForm" class="vault-dialog__form">
+            <h2 id="saveDialogTitle">Save password</h2>
+            <p id="vaultInstructions"></p>
+            <p class="vault-dialog__notice">Your entries are encrypted in this browser. If you forget your master password, they cannot be recovered.</p>
+
+            <label class="vault-dialog__field" for="websiteInput">
+                Website
+                <input id="websiteInput" name="website" type="text" autocomplete="url" required>
+            </label>
+            <label class="vault-dialog__field" for="usernameInput">
+                Username
+                <input id="usernameInput" name="username" type="text" autocomplete="username" required>
+            </label>
+            <label class="vault-dialog__field" for="savedPasswordInput">
+                Password to save
+                <input id="savedPasswordInput" name="password" type="text" readonly autocomplete="off">
+            </label>
+            <label class="vault-dialog__field" for="masterPasswordInput">
+                Master password
+                <input id="masterPasswordInput" name="masterPassword" type="password" autocomplete="current-password" required>
+            </label>
+            <label class="vault-dialog__field" id="confirmMasterPasswordField" for="confirmMasterPasswordInput" hidden>
+                Confirm master password
+                <input id="confirmMasterPasswordInput" name="confirmMasterPassword" type="password" autocomplete="new-password">
+            </label>
+
+            <p id="saveError" class="vault-dialog__error" role="alert" hidden></p>
+            <div class="vault-dialog__actions">
+                <button class="vault-dialog__button vault-dialog__button--primary" type="submit">Save entry</button>
+                <button class="vault-dialog__button" id="cancelSaveBtn" type="button">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="vaultDialog" class="vault-dialog" aria-labelledby="vaultDialogTitle">
+        <section class="vault-dialog__form">
+            <h2 id="vaultDialogTitle">Saved passwords</h2>
+            <p id="vaultUnlockInstructions">Enter your master password to unlock your vault.</p>
+            <form id="vaultUnlockForm" class="vault-dialog__form">
+                <label class="vault-dialog__field" for="vaultMasterPasswordInput">
+                    Master password
+                    <input id="vaultMasterPasswordInput" name="masterPassword" type="password" autocomplete="current-password" required>
+                </label>
+                <div class="vault-dialog__actions">
+                    <button class="vault-dialog__button vault-dialog__button--primary" type="submit">Unlock vault</button>
+                </div>
+            </form>
+            <p id="vaultError" class="vault-dialog__error" role="alert" hidden></p>
+            <div id="vaultEntries" class="vault-entries" aria-live="polite" hidden></div>
+            <div class="vault-dialog__actions">
+                <button class="vault-dialog__button" id="closeVaultBtn" type="button">Close</button>
+            </div>
+        </section>
+    </dialog>
+    <script src="js/secureStorage.js"></script>
     <script src="js/logic.js"></script>
 </body>
 </html>

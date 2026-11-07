@@ -1,3 +1,158 @@
 h1, div {
     text-align: center;
 }
+
+.c-pwd-gen__pass-buttons {
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 40px;
+}
+
+.c-pwd-gen__pass-buttons > .c-pwd-gen__copy-btn,
+.c-pwd-gen__pass-buttons > .c-pwd-gen__save-btn {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.c-pwd-gen__pass-buttons .c-button,
+.c-pwd-gen__pass-buttons .c-btn {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
+}
+
+.vault-status {
+    min-height: 1.5em;
+    color: #176b3a;
+}
+
+.vault-dialog {
+    width: min(92vw, 30rem);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 1.5rem;
+    border: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 1rem 3rem rgb(0 0 0 / 25%);
+    color: #202124;
+}
+
+.vault-dialog::backdrop {
+    background: rgb(0 0 0 / 55%);
+}
+
+.vault-dialog__form {
+    display: grid;
+    gap: 1rem;
+    text-align: left;
+}
+
+.vault-dialog__form h2,
+.vault-dialog__form p {
+    margin: 0;
+    text-align: left;
+}
+
+.vault-dialog__notice {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.vault-dialog__field {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 600;
+}
+
+.vault-dialog__field input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.65rem;
+    border: 1px solid #777;
+    border-radius: 0.3rem;
+}
+
+.vault-dialog__field input[readonly] {
+    background: #f2f2f2;
+}
+
+.vault-dialog__error {
+    color: #b00020;
+}
+
+.vault-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.vault-dialog__button {
+    padding: 0.65rem 1rem;
+    border: 1px solid #555;
+    border-radius: 0.3rem;
+    background: white;
+    color: #202124;
+    cursor: pointer;
+}
+
+.vault-dialog__button--primary {
+    border-color: #005eb8;
+    background: #005eb8;
+    color: white;
+}
+
+.vault-entries {
+    display: grid;
+    gap: 0.75rem;
+    max-height: 55vh;
+    overflow: auto;
+    text-align: left;
+}
+
+.vault-entry {
+    padding: 0.85rem;
+    border: 1px solid #ccc;
+    border-radius: 0.4rem;
+    overflow-wrap: anywhere;
+    text-align: left;
+}
+
+.vault-entry p {
+    margin: 0.3rem 0;
+    text-align: left;
+}
+
+.vault-entry__password {
+    font-family: monospace;
+    user-select: all;
+}
+
+.vault-entry__details,
+.vault-entry__edit-form,
+.vault-entry__delete-confirmation {
+    display: grid;
+    gap: 0.65rem;
+    text-align: left;
+}
+
+.vault-entry__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.vault-entry__delete-confirmation p {
+    color: #b00020;
+}
+
+#saveStatus {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 24px;
+}
