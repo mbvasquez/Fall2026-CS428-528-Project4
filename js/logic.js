@@ -211,6 +211,7 @@ saveDialog.addEventListener('close', () => {
     confirmMasterPasswordInput.value = "";
 });
 
+// Secure storage event listeners
 saveForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     saveError.hidden = true;
@@ -311,6 +312,8 @@ vaultUnlockForm.addEventListener('submit', async (event) => {
     }
 });
 
+
+// Build vault entries within the modal popup
 function renderVaultEntries(entries) {
     vaultEntries.replaceChildren();
     if (entries.length === 0) {
@@ -399,6 +402,7 @@ function renderVaultEntries(entries) {
     });
 }
 
+// Edit and delete functionality
 vaultEntries.addEventListener('click', async (event) => {
     const button = event.target.closest('button[data-vault-action]');
     if (!button) {
