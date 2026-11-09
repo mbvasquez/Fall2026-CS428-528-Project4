@@ -4,6 +4,9 @@ const upperAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const numbers = "0123456789";
 const symbols = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
 
+// Strength Test Library
+const SEQUENCES = ['abcdefghijklmnopqrstuvwxyz', '01234567890', 'poiuytrewqlkjhgfdsamnbvcxz', 'qwertyuiopasdfghjklzxcvbnm', '09876543210', 'zyxwvutsrqponmlkjihgfedcba'];
+
 // Configurable options
 const useLowercase = document.getElementById("lowercase");
 const useUppercase = document.getElementById("uppercase");
@@ -43,6 +46,11 @@ const vaultUnlockInstructions = document.getElementById("vaultUnlockInstructions
 const vaultError = document.getElementById("vaultError");
 const vaultEntries = document.getElementById("vaultEntries");
 const closeVaultBtn = document.getElementById("closeVaultBtn");
+const strengthVeryWeak = document.getElementById("veryWeak");
+const strengthWeak = document.getElementById("weak");
+const strengthGood = document.getElementById("good");
+const strengthStrong = document.getElementById("strong");
+const strengthVeryStrong = document.getElementById("veryStrong");
 let unlockedVault = null;
 
 // Random password generator function
@@ -67,7 +75,42 @@ function generatePassword(length, useLowercase, useUppercase, useNumbers, useSym
         const randomIndex = randomValue[0] % characters.length;
         password += characters[randomIndex];
     }
+    evaluatePasswordStrength(password);
     return password;
+}
+
+function evaluatePasswordStrength(password) {
+    
+    const length = password.length;
+    let poolSize = 0;
+    if (/[a-z]/.test(password)) poolSize += 26;
+    if (/[A-Z]/.test(password)) poolSize += 26;
+    if (/[0-9]/.test(password)) poolSize += 10;
+    if (/[^a-zA-Z0-9]/.test(password)) poolSize += 33;
+
+    let entropy = length * (Math.log(poolSize || 1) / Math.log(2));
+    let normalizedPassword = password.toLowerCase();
+    for (const seq of SEQUENCES) {
+        for (let i = 0; i <= seq.length - 3; i++) {
+            const subSeq = seq.substring(i, i + 3);
+            if (normalizedPassword.includes(subSeq)) {
+                entropy -= 5;
+            }
+        }
+    }
+
+    const repeats = password.match(/(.)\1{2,}/g);
+    if (repeats) {
+        entropy -= (repeats.join('').length * 2);
+    }
+
+    entropy = Math.max(0, Math.round(entropy));
+    if (entropy < 25) { strengthVeryWeak.style="display: block;"; strengthWeak.style="display: none;"; strengthGood.style="display: none;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: none;";}
+    else if (entropy >= 25 && entropy < 40) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: block;"; strengthGood.style="display: none;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: none;"; }
+    else if (entropy >= 40 && entropy < 60) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: none;"; strengthGood.style="display: block;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: none;"; }
+    else if (entropy >= 60 && entropy < 80) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: none;"; strengthGood.style="display: none;"; strengthStrong.style="display: block;"; strengthVeryStrong.style="display: none;"; }
+    else if (entropy >= 80) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: none;"; strengthGood.style="display: none;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: block;"; } 
+
 }
 
 function copyText() {
@@ -83,7 +126,7 @@ function copyText() {
     });
 }
 
-// Event lister for length slider
+// Event listener for length slider
 function updateSliderBackground() {
     const min = parseFloat(slider.min) || 1;
     const max = parseFloat(slider.max) || 50;
@@ -175,7 +218,7 @@ copyBtn.addEventListener('click', function () {
     copyText();
 });
 
-// Event lister for the save button
+// Event listener for the save button
 saveBtn.addEventListener('click', (event) => {
     event.preventDefault();
     let isNewVault;
