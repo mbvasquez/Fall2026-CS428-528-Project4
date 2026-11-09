@@ -46,38 +46,20 @@ const vaultUnlockInstructions = document.getElementById("vaultUnlockInstructions
 const vaultError = document.getElementById("vaultError");
 const vaultEntries = document.getElementById("vaultEntries");
 const closeVaultBtn = document.getElementById("closeVaultBtn");
+let unlockedVault = null;
+
+// Strength indicator variables
 const strengthVeryWeak = document.getElementById("veryWeak");
 const strengthWeak = document.getElementById("weak");
 const strengthGood = document.getElementById("good");
 const strengthStrong = document.getElementById("strong");
 const strengthVeryStrong = document.getElementById("veryStrong");
-let unlockedVault = null;
 
-// Random password generator function
-function generatePassword(length, useLowercase, useUppercase, useNumbers, useSymbols, avoidAmbiguous) {
-    let characters = "";
-    if (useLowercase) characters += lowerAlphabet;
-    if (useUppercase) characters += upperAlphabet;
-    if (useNumbers) characters += numbers;
-    if (useSymbols) characters += symbols;
-    if (avoidAmbiguous) {
-        characters = characters.replace(/[lI10O|]/g, '');
-    }
-
-    let password = "";
-    for (let i = 0; i < length; i++) {
-        // Cryptographically secure random number generator
-        const range = Math.floor(0x100000000 / characters.length) * characters.length;
-        const randomValue = new Uint32Array(1);
-        do {
-            crypto.getRandomValues(randomValue);
-        } while (randomValue[0] >= range);
-        const randomIndex = randomValue[0] % characters.length;
-        password += characters[randomIndex];
-    }
-    evaluatePasswordStrength(password);
-    return password;
-}
+const veryWeakImage = document.getElementById("veryWeakImage");
+const weakImage = document.getElementById("weakImage");
+const goodImage = document.getElementById("goodImage");
+const strongImage = document.getElementById("strongImage");
+const veryStrongImage = document.getElementById("veryStrongImage");
 
 function evaluatePasswordStrength(password) {
     
@@ -105,12 +87,67 @@ function evaluatePasswordStrength(password) {
     }
 
     entropy = Math.max(0, Math.round(entropy));
-    if (entropy < 25) { strengthVeryWeak.style="display: block;"; strengthWeak.style="display: none;"; strengthGood.style="display: none;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: none;";}
-    else if (entropy >= 25 && entropy < 40) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: block;"; strengthGood.style="display: none;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: none;"; }
-    else if (entropy >= 40 && entropy < 60) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: none;"; strengthGood.style="display: block;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: none;"; }
-    else if (entropy >= 60 && entropy < 80) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: none;"; strengthGood.style="display: none;"; strengthStrong.style="display: block;"; strengthVeryStrong.style="display: none;"; }
-    else if (entropy >= 80) { strengthVeryWeak.style="display: none;"; strengthWeak.style="display: none;"; strengthGood.style="display: none;"; strengthStrong.style="display: none;"; strengthVeryStrong.style="display: block;"; } 
+    
+    // Make all labels hidden
+    strengthVeryWeak.style = "display: none";
+    strengthWeak.style = "display: none";
+    strengthGood.style = "display: none";
+    strengthStrong.style = "display: none";
+    strengthVeryStrong.style = "display: none"
+    veryWeakImage.style = "display: none";
+    weakImage.style = "display: none";
+    goodImage.style = "display: none";
+    strongImage.style = "display: none";
+    veryStrongImage.style = "display: none";
 
+    // Make appropriate label visible
+    if (entropy < 25) { 
+        strengthVeryWeak.style = "display: block";
+        veryWeakImage.style = "display: block";
+    }
+    else if (entropy >= 25 && entropy < 40) { 
+        strengthWeak.style = "display: block";
+        weakImage.style = "display: block";
+    }
+    else if (entropy >= 40 && entropy < 60) { 
+        strengthGood.style = "display: block;"
+        goodImage.style = "display: block";
+    }
+    else if (entropy >= 60 && entropy < 80) { 
+        strengthStrong.style = "display: block";
+        strongImage.style = "display: block"; 
+    }
+    else if (entropy >= 80) { 
+        strengthVeryStrong.style = "display: block"; 
+        veryStrongImage.style = "display: block";
+    } 
+
+}
+
+// Random password generator function
+function generatePassword(length, useLowercase, useUppercase, useNumbers, useSymbols, avoidAmbiguous) {
+    let characters = "";
+    if (useLowercase) characters += lowerAlphabet;
+    if (useUppercase) characters += upperAlphabet;
+    if (useNumbers) characters += numbers;
+    if (useSymbols) characters += symbols;
+    if (avoidAmbiguous) {
+        characters = characters.replace(/[lI10O|]/g, '');
+    }
+
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        // Cryptographically secure random number generator
+        const range = Math.floor(0x100000000 / characters.length) * characters.length;
+        const randomValue = new Uint32Array(1);
+        do {
+            crypto.getRandomValues(randomValue);
+        } while (randomValue[0] >= range);
+        const randomIndex = randomValue[0] % characters.length;
+        password += characters[randomIndex];
+    }
+    evaluatePasswordStrength(password);
+    return password;
 }
 
 function copyText() {
