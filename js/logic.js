@@ -240,8 +240,10 @@ copyBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(passwordText.value)
     .then(() => {
         copyBtn.textContent = 'Copied!';
+        copyBtn.style.fontSize = 'large';
         setTimeout(() => {
             copyBtn.textContent = 'Copy';
+            copyBtn.style.fontSize = 'large';
         }, 2000);
     })
     .catch(err => {
@@ -324,9 +326,11 @@ saveForm.addEventListener('submit', async (event) => {
         });
         saveDialog.close();
         saveBtn.textContent = "Saved!"
+        saveBtn.style.fontSize = "large";
         
         setTimeout(() => {
             saveBtn.textContent = "Save";
+            saveBtn.style.fontSize = "large";
         }, 2000);
         
     } catch (error) {
