@@ -1,5 +1,38 @@
+@font-face {
+  font-family: 'Mier B';
+  src: url('../fonts/MierB03-SubsetEng-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mier B';
+  src: url('../fonts/MierB03-SubsetEng-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mier B';
+  src: url('../fonts/MierB03-SubsetEng-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 h1, div {
     text-align: center;
+    font-family: 'Mier B', Helvetica, Arial, sans-serif;
+}
+
+#save, #copy, #viewVaultBtn {
+    font-size: large;
+}
+
+#description {
+    margin-top: 1rem;
 }
 
 .c-pwd-gen__pass-buttons {

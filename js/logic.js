@@ -54,7 +54,6 @@ const strengthWeak = document.getElementById("weak");
 const strengthGood = document.getElementById("good");
 const strengthStrong = document.getElementById("strong");
 const strengthVeryStrong = document.getElementById("veryStrong");
-
 const veryWeakImage = document.getElementById("veryWeakImage");
 const weakImage = document.getElementById("weakImage");
 const goodImage = document.getElementById("goodImage");
@@ -62,7 +61,6 @@ const strongImage = document.getElementById("strongImage");
 const veryStrongImage = document.getElementById("veryStrongImage");
 
 function evaluatePasswordStrength(password) {
-    
     const length = password.length;
     let poolSize = 0;
     if (/[a-z]/.test(password)) poolSize += 26;
@@ -148,19 +146,6 @@ function generatePassword(length, useLowercase, useUppercase, useNumbers, useSym
     }
     evaluatePasswordStrength(password);
     return password;
-}
-
-function copyText() {
-    navigator.clipboard.writeText(passwordText.value)
-    .then(() => {
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => {
-            copyBtn.textContent = 'Copy';
-        }, 2000);
-    })
-    .catch(err => {
-      console.error("Failed to copy: ", err);
-    });
 }
 
 // Event listener for length slider
@@ -251,8 +236,17 @@ avoidAmbiguous.addEventListener('change', () => {
 });
 
 // Event listener for the copy button 
-copyBtn.addEventListener('click', function () {
-    copyText();
+copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(passwordText.value)
+    .then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+            copyBtn.textContent = 'Copy';
+        }, 2000);
+    })
+    .catch(err => {
+      console.error("Failed to copy: ", err);
+    });
 });
 
 // Event listener for the save button
@@ -578,4 +572,4 @@ vaultDialog.addEventListener('close', () => {
 
 // Generate a new password when the page loads
 updateSliderBackground();
-passwordText.value = generatePassword(20, useLowercase.checked, useUppercase.checked, useNumbers.checked, useSymbols.checked, avoidAmbiguous.checked);
+passwordText.value = generatePassword(16, useLowercase.checked, useUppercase.checked, useNumbers.checked, useSymbols.checked, avoidAmbiguous.checked);
